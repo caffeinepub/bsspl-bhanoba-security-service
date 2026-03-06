@@ -30,6 +30,7 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ServiceType } from "./backend.d";
@@ -1253,6 +1254,79 @@ function ContactSection() {
   );
 }
 
+function QRSection() {
+  const siteUrl = window.location.origin + window.location.pathname;
+
+  return (
+    <section
+      className="py-16 relative overflow-hidden"
+      style={{ backgroundColor: "oklch(var(--navy))" }}
+    >
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 60% 60% at 50% 50%, oklch(var(--gold)), transparent)",
+        }}
+      />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="flex flex-col items-center text-center gap-6"
+        >
+          <motion.div variants={fadeUpVariant}>
+            <SectionLabel>Scan to Visit</SectionLabel>
+          </motion.div>
+          <motion.h2
+            variants={fadeUpVariant}
+            className="font-display font-black text-3xl sm:text-4xl text-white"
+          >
+            Share Our Website
+          </motion.h2>
+          <motion.p
+            variants={fadeUpVariant}
+            className="text-white/60 font-body max-w-md"
+          >
+            Scan this QR code with any smartphone camera to open the BSSPL
+            website instantly.
+          </motion.p>
+          <motion.div
+            variants={scaleInVariant}
+            className="p-5 rounded-2xl shadow-2xl border border-white/20"
+            style={{ backgroundColor: "white" }}
+          >
+            <QRCodeSVG
+              value={siteUrl}
+              size={200}
+              bgColor="#ffffff"
+              fgColor="#0f2a3d"
+              level="H"
+              includeMargin={false}
+              imageSettings={{
+                src: "/assets/uploads/Screenshot_2026-02-06-22-17-31-60_965bbf4d18d205f782c6b8409c5773a4-18.jpg",
+                x: undefined,
+                y: undefined,
+                height: 40,
+                width: 40,
+                excavate: true,
+              }}
+            />
+          </motion.div>
+          <motion.p
+            variants={fadeUpVariant}
+            className="text-white/40 text-xs font-body"
+          >
+            {siteUrl}
+          </motion.p>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   const year = new Date().getFullYear();
   const caffeineUrl = `https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`;
@@ -1371,6 +1445,7 @@ export default function App() {
         <WhyUsSection />
         <GallerySection />
         <ContactSection />
+        <QRSection />
       </main>
       <Footer />
     </div>
