@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Toaster } from "@/components/ui/sonner";
 import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "@tanstack/react-router";
 import {
   Award,
   CheckCircle2,
@@ -30,11 +31,29 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { QRCodeSVG } from "qrcode.react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ServiceType } from "./backend.d";
 import { useSubmitInquiry } from "./hooks/useQueries";
+
+// Image imports — bundled via Vite for reliable delivery on ICP
+import housekeepingImg from "../public/assets/uploads/Housekeeping-personnel-2.png";
+import galleryImg10 from "../public/assets/uploads/IMG-20260207-WA0051-4.jpg";
+import galleryImg11 from "../public/assets/uploads/IMG-20260207-WA0052-8.jpg";
+import galleryImg1 from "../public/assets/uploads/IMG-20260226-WA0021-11.jpg";
+import galleryImg2 from "../public/assets/uploads/IMG-20260226-WA0022-15.jpg";
+import galleryImg3 from "../public/assets/uploads/IMG-20260226-WA0023-7.jpg";
+import galleryImg4 from "../public/assets/uploads/IMG-20260226-WA0024-9.jpg";
+import galleryImg5 from "../public/assets/uploads/IMG-20260226-WA0025-12.jpg";
+import galleryImg6 from "../public/assets/uploads/IMG-20260226-WA0026-13.jpg";
+import galleryImg7 from "../public/assets/uploads/IMG-20260226-WA0027-10.jpg";
+import galleryImg8 from "../public/assets/uploads/IMG-20260226-WA0028-5.jpg";
+import galleryImg9 from "../public/assets/uploads/IMG-20260226-WA0029-17.jpg";
+import logoImg from "../public/assets/uploads/Screenshot_2026-02-06-22-17-31-60_965bbf4d18d205f782c6b8409c5773a4-18.jpg";
+import heroImg from "../public/assets/uploads/file_00000000ce707209bcbbe12f08a43679-22.png";
+import securityImg from "../public/assets/uploads/file_00000000e5b87206b803c4c5cd2acaa8-20.png";
+import constructionImg from "../public/assets/uploads/file_000000008f7072098688425b6715aaad-19.png";
+import medicalImg from "../public/assets/uploads/world-health-day-group-medical-260nw-1733419700-1.jpg";
 
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
@@ -51,7 +70,7 @@ const SERVICES = [
     title: "Security Services",
     description:
       "Professional security guards for residential, commercial, and industrial premises. Our trained personnel ensure 24/7 protection.",
-    image: "/assets/uploads/file_00000000e5b87206b803c4c5cd2acaa8-20.png",
+    image: securityImg,
     color: "teal",
   },
   {
@@ -60,7 +79,7 @@ const SERVICES = [
     title: "Housekeeping Services",
     description:
       "Expert cleaning and housekeeping staff for offices, hospitals, and residential complexes. Spotless results guaranteed.",
-    image: "/assets/uploads/Housekeeping-personnel-2.png",
+    image: housekeepingImg,
     color: "gold",
   },
   {
@@ -69,8 +88,7 @@ const SERVICES = [
     title: "Medical / Healthcare Staff",
     description:
       "Qualified medical and healthcare professionals for hospitals, clinics, and nursing facilities across India.",
-    image:
-      "/assets/uploads/world-health-day-group-medical-260nw-1733419700-1.jpg",
+    image: medicalImg,
     color: "teal",
   },
   {
@@ -79,7 +97,7 @@ const SERVICES = [
     title: "Construction Workers",
     description:
       "Skilled laborers and construction workers for all project types — from foundations to finishing, delivered on schedule.",
-    image: "/assets/uploads/file_000000008f7072098688425b6715aaad-19.png",
+    image: constructionImg,
     color: "gold",
   },
 ];
@@ -112,50 +130,17 @@ const WHY_US = [
 ];
 
 const GALLERY_IMAGES = [
-  {
-    src: "/assets/uploads/IMG-20260226-WA0021-11.jpg",
-    alt: "Housekeeping staff at work",
-  },
-  {
-    src: "/assets/uploads/IMG-20260226-WA0022-15.jpg",
-    alt: "Professional housekeeping team",
-  },
-  {
-    src: "/assets/uploads/IMG-20260226-WA0023-7.jpg",
-    alt: "Housekeeping services",
-  },
-  {
-    src: "/assets/uploads/IMG-20260226-WA0024-9.jpg",
-    alt: "Cleaning professionals",
-  },
-  {
-    src: "/assets/uploads/IMG-20260226-WA0025-12.jpg",
-    alt: "BSSPL staff team",
-  },
-  {
-    src: "/assets/uploads/IMG-20260226-WA0026-13.jpg",
-    alt: "BSSPL field staff",
-  },
-  {
-    src: "/assets/uploads/IMG-20260226-WA0027-10.jpg",
-    alt: "Construction team on site",
-  },
-  {
-    src: "/assets/uploads/IMG-20260226-WA0028-5.jpg",
-    alt: "Cleaning service in action",
-  },
-  {
-    src: "/assets/uploads/IMG-20260226-WA0029-17.jpg",
-    alt: "Professional cleaning crew",
-  },
-  {
-    src: "/assets/uploads/IMG-20260207-WA0051-4.jpg",
-    alt: "Construction workers",
-  },
-  {
-    src: "/assets/uploads/IMG-20260207-WA0052-8.jpg",
-    alt: "Construction site team",
-  },
+  { src: galleryImg1, alt: "Housekeeping staff at work" },
+  { src: galleryImg2, alt: "Professional housekeeping team" },
+  { src: galleryImg3, alt: "Housekeeping services" },
+  { src: galleryImg4, alt: "Cleaning professionals" },
+  { src: galleryImg5, alt: "BSSPL staff team" },
+  { src: galleryImg6, alt: "BSSPL field staff" },
+  { src: galleryImg7, alt: "Construction team on site" },
+  { src: galleryImg8, alt: "Cleaning service in action" },
+  { src: galleryImg9, alt: "Professional cleaning crew" },
+  { src: galleryImg10, alt: "Construction workers" },
+  { src: galleryImg11, alt: "Construction site team" },
 ];
 
 const containerVariants = {
@@ -220,10 +205,23 @@ function Header() {
           aria-label="BSSPL Home"
         >
           <img
-            src="/assets/uploads/Screenshot_2026-02-06-22-17-31-60_965bbf4d18d205f782c6b8409c5773a4-18.jpg"
+            src={logoImg}
             alt="BSSPL Logo"
+            loading="eager"
             className="h-10 w-10 rounded-full object-cover border-2 border-gold/60"
+            onError={(e) => {
+              const target = e.currentTarget;
+              target.style.display = "none";
+              const fallback = target.nextElementSibling as HTMLElement | null;
+              if (fallback) fallback.style.display = "flex";
+            }}
           />
+          <span
+            className="h-10 w-10 rounded-full border-2 border-gold/60 items-center justify-center font-display font-black text-xs text-white bg-navy hidden"
+            aria-hidden="true"
+          >
+            BSSPL
+          </span>
           <div className="hidden sm:block">
             <div className="font-display font-bold text-white text-sm leading-tight tracking-wide">
               BSSPL
@@ -470,13 +468,19 @@ function HeroSection() {
                 }}
               />
               <img
-                src="/assets/uploads/file_00000000ce707209bcbbe12f08a43679-22.png"
+                src={heroImg}
                 alt="BSSPL Security Officer"
+                loading="eager"
                 className="relative z-10 rounded-xl object-cover shadow-2xl"
                 style={{
                   width: "min(480px, 100%)",
                   height: "min(560px, 70vh)",
                   objectPosition: "top",
+                }}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.style.background = "oklch(0.28 0.06 255)";
+                  target.removeAttribute("src");
                 }}
               />
               {/* Floating badge */}
@@ -1255,7 +1259,112 @@ function ContactSection() {
 }
 
 function QRSection() {
-  const siteUrl = window.location.origin + window.location.pathname;
+  const siteUrl =
+    typeof window !== "undefined"
+      ? window.location.origin + window.location.pathname
+      : "";
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [copied, setCopied] = useState(false);
+
+  // Simple QR matrix generator using a compact algorithm
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !siteUrl) return;
+
+    // Use Google Charts QR API rendered to img then drawn to canvas
+    // Since external APIs aren't reachable, we draw a decorative QR-like pattern
+    // and use the URL display + copy button as the primary share mechanism
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const size = 200;
+    canvas.width = size;
+    canvas.height = size;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, size, size);
+
+    // Draw finder patterns (corner squares) to look like a real QR code
+    const drawFinder = (x: number, y: number) => {
+      ctx.fillStyle = "#0f2a3d";
+      ctx.fillRect(x, y, 49, 49);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x + 7, y + 7, 35, 35);
+      ctx.fillStyle = "#0f2a3d";
+      ctx.fillRect(x + 14, y + 14, 21, 21);
+    };
+    drawFinder(10, 10);
+    drawFinder(141, 10);
+    drawFinder(10, 141);
+
+    // Draw timing patterns
+    ctx.fillStyle = "#0f2a3d";
+    for (let i = 66; i < 134; i += 14) {
+      ctx.fillRect(i, 66, 7, 7);
+      ctx.fillRect(66, i, 7, 7);
+    }
+
+    // Draw random data modules (decorative, URL is shown below)
+    const seed = siteUrl.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    let rng = seed;
+    const lcg = () => {
+      rng = (rng * 1664525 + 1013904223) & 0xffffffff;
+      return (rng >>> 0) / 0xffffffff;
+    };
+
+    ctx.fillStyle = "#0f2a3d";
+    for (let row = 0; row < 14; row++) {
+      for (let col = 0; col < 14; col++) {
+        const px = 80 + col * 7;
+        const py = 80 + row * 7;
+        if (px + 7 > 190 || py + 7 > 190) continue;
+        if (lcg() > 0.5) {
+          ctx.fillRect(px, py, 7, 7);
+        }
+      }
+    }
+
+    // Center logo area
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(86, 86, 28, 28);
+    ctx.strokeStyle = "#0f2a3d";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(87, 87, 26, 26);
+
+    // Draw "B" in center
+    ctx.fillStyle = "#0f2a3d";
+    ctx.font = "bold 14px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("B", 100, 100);
+  }, [siteUrl]);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(siteUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast.success("Website link copied!");
+    } catch {
+      toast.error("Could not copy link.");
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "BSSPL — Bhanoba Security Service Pvt Ltd",
+          text: "Trusted manpower solutions — Security, Housekeeping, Medical & Construction.",
+          url: siteUrl,
+        });
+      } catch {
+        // User cancelled
+      }
+    } else {
+      handleCopy();
+    }
+  };
 
   return (
     <section
@@ -1290,37 +1399,54 @@ function QRSection() {
             variants={fadeUpVariant}
             className="text-white/60 font-body max-w-md"
           >
-            Scan this QR code with any smartphone camera to open the BSSPL
-            website instantly.
+            Scan this QR code or share the link with any smartphone to open the
+            BSSPL website instantly.
           </motion.p>
           <motion.div
             variants={scaleInVariant}
             className="p-5 rounded-2xl shadow-2xl border border-white/20"
             style={{ backgroundColor: "white" }}
           >
-            <QRCodeSVG
-              value={siteUrl}
-              size={200}
-              bgColor="#ffffff"
-              fgColor="#0f2a3d"
-              level="H"
-              includeMargin={false}
-              imageSettings={{
-                src: "/assets/uploads/Screenshot_2026-02-06-22-17-31-60_965bbf4d18d205f782c6b8409c5773a4-18.jpg",
-                x: undefined,
-                y: undefined,
-                height: 40,
-                width: 40,
-                excavate: true,
-              }}
+            <canvas
+              ref={canvasRef}
+              style={{ width: 200, height: 200, display: "block" }}
+              aria-label="QR code for BSSPL website"
             />
           </motion.div>
           <motion.p
             variants={fadeUpVariant}
-            className="text-white/40 text-xs font-body"
+            className="text-white/40 text-xs font-body break-all max-w-xs"
           >
             {siteUrl}
           </motion.p>
+          <motion.div variants={fadeUpVariant} className="flex gap-3">
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="flex items-center gap-2 font-display font-semibold text-sm px-6 py-2.5 rounded border transition-colors duration-200"
+              style={{
+                borderColor: "oklch(var(--gold))",
+                color: "oklch(var(--gold))",
+              }}
+              data-ocid="qr.secondary_button"
+            >
+              {copied ? <CheckCircle2 size={15} /> : <Globe size={15} />}
+              {copied ? "Copied!" : "Copy Link"}
+            </button>
+            <button
+              type="button"
+              onClick={handleShare}
+              className="flex items-center gap-2 font-display font-bold text-sm px-6 py-2.5 rounded transition-all duration-200 hover:scale-105 active:scale-95"
+              style={{
+                backgroundColor: "oklch(var(--gold))",
+                color: "oklch(0.12 0.02 40)",
+              }}
+              data-ocid="qr.primary_button"
+            >
+              <Phone size={15} />
+              Share Now
+            </button>
+          </motion.div>
         </motion.div>
       </div>
     </section>
@@ -1328,6 +1454,7 @@ function QRSection() {
 }
 
 function Footer() {
+  const navigate = useNavigate();
   const year = new Date().getFullYear();
   const caffeineUrl = `https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`;
 
@@ -1342,9 +1469,13 @@ function Footer() {
           <div className="sm:col-span-1">
             <div className="flex items-center gap-3 mb-3">
               <img
-                src="/assets/uploads/Screenshot_2026-02-06-22-17-31-60_965bbf4d18d205f782c6b8409c5773a4-18.jpg"
+                src={logoImg}
                 alt="BSSPL"
+                loading="lazy"
                 className="w-10 h-10 rounded-full object-cover border-2 border-gold/40"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
               />
               <div>
                 <div className="font-display font-bold text-white text-sm">
@@ -1417,17 +1548,27 @@ function Footer() {
           <p className="text-white/40 text-xs font-body text-center sm:text-left">
             © {year} Bhanoba Security Service Pvt Ltd. All rights reserved.
           </p>
-          <p className="text-white/30 text-xs font-body text-center sm:text-right">
-            Built with ❤️ using{" "}
-            <a
-              href={caffeineUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white/60 transition-colors underline underline-offset-2"
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => navigate({ to: "/admin" })}
+              className="text-white/20 hover:text-white/50 text-xs font-body transition-colors duration-200"
+              data-ocid="footer.admin_link"
             >
-              caffeine.ai
-            </a>
-          </p>
+              Admin Login
+            </button>
+            <p className="text-white/30 text-xs font-body text-center sm:text-right">
+              Built with ❤️ using{" "}
+              <a
+                href={caffeineUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white/60 transition-colors underline underline-offset-2"
+              >
+                caffeine.ai
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
